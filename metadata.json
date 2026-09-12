@@ -1,0 +1,6 @@
+{
+  "name": "Generátor zasedacího pořádku",
+  "description": "Pomocník pro pedagogy pro tvorbu zasedacího pořádku (2 sloupce po 8 žácích s uličkou i podkovovité U uspořádání), automatické načítání tříd z Excelu na GitHubu (jedna lišta jedna třída), export do Excelu a PDF.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
