@@ -2,7 +2,6 @@ import React from 'react';
 import {
   Shuffle,
   FileSpreadsheet,
-  Download,
   HelpCircle,
   Printer,
   Users,
@@ -19,7 +18,6 @@ interface HeaderProps {
   totalSeats: number;
   onOpenUpload: () => void;
   onGenerateRandom: () => void;
-  onDownloadExcel: () => void;
   onDownloadPdf: () => void;
   onOpenGuide: () => void;
   onOpenPrint: () => void;
@@ -35,7 +33,6 @@ export const Header: React.FC<HeaderProps> = ({
   totalSeats,
   onOpenUpload,
   onGenerateRandom,
-  onDownloadExcel,
   onDownloadPdf,
   onOpenGuide,
   onOpenPrint,
@@ -133,22 +130,6 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <FileText className="h-3.5 w-3.5" />
               <span>Uložit jako PDF</span>
-            </button>
-
-            {/* Download Excel Button */}
-            <button
-              onClick={onDownloadExcel}
-              id="btn-download-excel"
-              disabled={students.length === 0}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg shadow-xs transition-all ${
-                students.length === 0
-                  ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                  : 'bg-emerald-600 hover:bg-emerald-700 text-white active:scale-95 shadow-emerald-200'
-              }`}
-              title="Stáhnout hotový zasedací pořádek jako Excel (.xlsx)"
-            >
-              <Download className="h-3.5 w-3.5" />
-              <span>Stáhnout Excel</span>
             </button>
 
             {/* Help / Guide to saving */}

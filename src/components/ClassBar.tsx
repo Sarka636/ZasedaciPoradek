@@ -9,6 +9,7 @@ import {
   CheckCircle2,
   AlertCircle,
   FileSpreadsheet,
+  X,
 } from 'lucide-react';
 import { ClassData } from '../types';
 
@@ -17,6 +18,7 @@ interface ClassBarProps {
   activeClassId: string;
   onSelectClass: (classId: string) => void;
   onAddClass: () => void;
+  onDeleteClass: (classId: string) => void;
   onSyncGitHub: () => void;
   onOpenGitHubSettings: () => void;
   onDownloadTemplate: () => void;
@@ -30,6 +32,7 @@ export const ClassBar: React.FC<ClassBarProps> = ({
   activeClassId,
   onSelectClass,
   onAddClass,
+  onDeleteClass,
   onSyncGitHub,
   onOpenGitHubSettings,
   onDownloadTemplate,
@@ -53,27 +56,46 @@ export const ClassBar: React.FC<ClassBarProps> = ({
               {classes.map((cls) => {
                 const isActive = cls.id === activeClassId;
                 return (
-                  <button
+                  <div
                     key={cls.id}
-                    type="button"
-                    onClick={() => onSelectClass(cls.id)}
-                    className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                    className={`inline-flex items-center rounded-lg border transition-all ${
                       isActive
-                        ? 'bg-indigo-600 text-white shadow-xs'
-                        : 'bg-slate-100 hover:bg-slate-200/80 text-slate-700 hover:text-slate-900 border border-slate-200/70'
+                        ? 'bg-indigo-600 text-white border-indigo-700 shadow-xs'
+                        : 'bg-slate-100 hover:bg-slate-200/80 text-slate-700 hover:text-slate-900 border-slate-200/70'
                     }`}
                   >
-                    <span>{cls.name}</span>
-                    <span
-                      className={`text-[10px] font-semibold px-1.5 py-0.2 rounded-full ${
+                    <button
+                      type="button"
+                      onClick={() => onSelectClass(cls.id)}
+                      className="inline-flex items-center gap-1.5 pl-2.5 pr-1 py-1.5 text-xs font-bold"
+                    >
+                      <span>{cls.name}</span>
+                      <span
+                        className={`text-[10px] font-semibold px-1.5 py-0.2 rounded-full ${
+                          isActive
+                            ? 'bg-indigo-700 text-indigo-100'
+                            : 'bg-slate-200 text-slate-600'
+                        }`}
+                      >
+                        {cls.students.length}
+                      </span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDeleteClass(cls.id);
+                      }}
+                      title={`Smazat třídu ${cls.name}`}
+                      className={`p-1 mr-1 rounded-md transition-colors ${
                         isActive
-                          ? 'bg-indigo-700 text-indigo-100'
-                          : 'bg-slate-200 text-slate-600'
+                          ? 'text-indigo-200 hover:text-white hover:bg-indigo-700'
+                          : 'text-slate-400 hover:text-red-600 hover:bg-slate-300/60'
                       }`}
                     >
-                      {cls.students.length}
-                    </span>
-                  </button>
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
                 );
               })}
 

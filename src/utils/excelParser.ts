@@ -3,90 +3,105 @@ import { ClassData, Student } from '../types';
 
 export const SAMPLE_CLASSES: { name: string; students: string[] }[] = [
   {
-    name: '1.A (26 studentů)',
+    name: '3A',
     students: [
-      'Adámková Tereza',
-      'Beneš Filip',
-      'Černá Eliška',
-      'Dvořák Jan',
-      'Fialová Karolína',
-      'Havel Jakub',
-      'Horáková Natálie',
-      'Janda Lukáš',
-      'Kovářová Adéla',
-      'Král David',
-      'Kučera Matěj',
-      'Lišková Veronika',
-      'Mareš Tomáš',
-      'Němcová Anna',
-      'Novák Michal',
-      'Pavlíková Kristýna',
-      'Polák Ondřej',
-      'Pospíšil Adam',
-      'Procházková Viktorie',
-      'Sedláček Daniel',
-      'Svobodová Barbora',
-      'Šimek Martin',
-      'Urban Vojtěch',
-      'Veselá Michaela',
-      'Vlček Petr',
-      'Zemanová Klára',
+      'Adam Brož',
+      'Anastasiia Balanets',
+      'Antonín Povolný',
+      'Daniel Horáček',
+      'Dominik Pavelka',
+      'Hynek Mayrhofer',
+      'Jakub Suchánsky',
+      'Jáchym Viták',
+      'Karyna Kryvka',
+      'Kubát Pavel',
+      'Lukáš Jiránek',
+      'Maksym Kravets',
+      'Marek Miláček',
+      'Marek Řehák',
+      'Mark Nahornyi',
+      'Matyáš Sauer',
+      'Michael Bartuněk',
+      'Michal Hron',
+      'Mykola Mandziuk',
+      'Ondřej Borovička',
+      'Petr Škarvan',
+      'Tomáš Filip',
+      'Tomáš Jandák',
+      'Tomáš Sunkovský',
+      'Tomáš Štěpán',
+      'Vincent Procházka',
+      'Vitalii Fenynets',
+      'Vojtěch Garčic',
+      'Šimon Kreperát',
+      'Šimon Kubala',
     ],
   },
   {
-    name: 'Sekunda B (30 studentů - plná třída)',
+    name: '1E',
     students: [
-      'Bartoš Jan',
-      'Blažková Lucie',
-      'Čechová Michaela',
-      'Doležal Marek',
-      'Dušková Julie',
-      'Holub Matyáš',
-      'Hrušková Dominika',
-      'Jelínek Šimon',
-      'Kadlecová Sofie',
-      'Kolář Patrik',
-      'Konečný Tobiáš',
-      'Kovář Štěpán',
-      'Krejčí Ema',
-      'Křížová Laura',
-      'Mach Antonín',
-      'Malá Tereza',
-      'Moravec Oliver',
-      'Navrátilová Stella',
-      'Novotný František',
-      'Pechová Vanessa',
-      'Pokorný Richard',
-      'Růžička Mikuláš',
-      'Sedláková Nela',
-      'Soukup Samuel',
-      'Staněk Gabriel',
-      'Strnadová Amálie',
-      'Sýkora Teodor',
-      'Tichá Sára',
-      'Valenta Kristián',
-      'Vávrová Elena',
+      'David Sládeček',
+      'Filip Rahbani',
+      'Hugo Struček',
+      'Jakub Zvěřina',
+      'Jan Brandejs',
+      'Lukáš Vojáček',
+      'Maksym Pavlyk',
+      'Martin Krkoška',
+      'Martin Stržínek',
+      'Michael Brychta',
+      'Mikuláš Hejnyš',
+      'Ondřej Vošahlík',
+      'Samuel Hrabák',
+      'Tereza Tichá',
+      'Timotej Goliáš',
+      'Tomáš Kučera',
+      'Tomáš Vorel',
+      'Viktor Bečka',
+      'Vojtěch Mládek',
+      'Vojtěch Valášek',
+      'Yehor Sablin',
+      'Zdeněk Dvořák',
     ],
   },
   {
-    name: 'Jazyková skupina (16 studentů)',
+    name: '3A_a',
     students: [
-      'Bílý Denis',
-      'Čermák Jan',
-      'Horák David',
-      'Janků Anna',
-      'Klimeš Tomáš',
-      'Kopecká Sára',
-      'Kratochvíl Jan',
-      'Křížová Eliška',
-      'Matoušek Ondřej',
-      'Novotná Pavla',
-      'Pešek Matěj',
-      'Richterová Lucie',
-      'Říha Martin',
-      'Smutná Kateřina',
-      'Toman Vojtěch',
-      'Žáková Tereza',
+      'Anastasiia Balanets',
+      'Michael Bartuněk',
+      'Ondřej Borovička',
+      'Adam Brož',
+      'Vitalii Fenynets',
+      'Tomáš Filip',
+      'Vojtěch Garčic',
+      'Daniel Horáček',
+      'Michal Hron',
+      'Tomáš Jandák',
+      'Lukáš Jiránek',
+      'Maksym Kravets',
+      'Šimon Kreperát',
+      'Karyna Kryvka',
+      'Šimon Kubala',
+      'Kubát Pavel',
+    ],
+  },
+  {
+    name: '3A_b',
+    students: [
+      'Mykola Mandziuk',
+      'Hynek Mayrhofer',
+      'Marek Miláček',
+      'Mark Nahornyi',
+      'Dominik Pavelka',
+      'Antonín Povolný',
+      'Vincent Procházka',
+      'Marek Řehák',
+      'Matyáš Sauer',
+      'Jakub Suchánsky',
+      'Tomáš Sunkovský',
+      'Petr Škarvan',
+      'Tomáš Štěpán',
+      'Jáchym Viták',
     ],
   },
 ];
@@ -208,19 +223,40 @@ export function parseExcelWorkbook(workbook: XLSX.WorkBook): ClassParseResult {
 }
 
 /**
- * Converts a regular GitHub web URL (e.g. github.com/user/repo/blob/main/tridy.xlsx)
- * to a direct raw link (raw.githubusercontent.com/user/repo/main/tridy.xlsx)
+ * Converts a GitHub or web URL to possible direct download candidates
+ * (e.g. checking both public/tridy.xlsx and root tridy.xlsx, main or master branch)
  */
-export function convertGitHubUrlToRaw(inputUrl: string): string {
+export function convertGitHubUrlToCandidates(inputUrl: string): string[] {
   const trimmed = inputUrl.trim();
-  if (!trimmed) return '';
+  if (!trimmed) return [];
+
+  const candidates: string[] = [];
+
+  // Case 0: GitHub repository root URL (e.g. https://github.com/owner/repo or with trailing slash)
+  const repoRootRegex = /^https?:\/\/github\.com\/([^\/]+)\/([^\/]+)\/?$/i;
+  const repoMatch = trimmed.match(repoRootRegex);
+  if (repoMatch) {
+    const [, owner, repo] = repoMatch;
+    candidates.push(`https://raw.githubusercontent.com/${owner}/${repo}/main/public/tridy.xlsx`);
+    candidates.push(`https://raw.githubusercontent.com/${owner}/${repo}/main/tridy.xlsx`);
+    candidates.push(`https://raw.githubusercontent.com/${owner}/${repo}/master/public/tridy.xlsx`);
+    candidates.push(`https://raw.githubusercontent.com/${owner}/${repo}/master/tridy.xlsx`);
+    return candidates;
+  }
 
   // Case 1: https://github.com/:owner/:repo/blob/:branch/:path...
   const blobRegex = /^https?:\/\/github\.com\/([^\/]+)\/([^\/]+)\/blob\/([^\/]+)\/(.+)$/i;
   const blobMatch = trimmed.match(blobRegex);
   if (blobMatch) {
     const [, owner, repo, branch, filePath] = blobMatch;
-    return `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${filePath}`;
+    const directRaw = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${filePath}`;
+    candidates.push(directRaw);
+    if (!filePath.startsWith('public/')) {
+      candidates.push(`https://raw.githubusercontent.com/${owner}/${repo}/${branch}/public/${filePath}`);
+    } else {
+      candidates.push(`https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${filePath.replace(/^public\//, '')}`);
+    }
+    return candidates;
   }
 
   // Case 2: https://github.com/:owner/:repo/raw/:branch/:path...
@@ -228,46 +264,92 @@ export function convertGitHubUrlToRaw(inputUrl: string): string {
   const rawMatch = trimmed.match(rawRegex);
   if (rawMatch) {
     const [, owner, repo, branch, filePath] = rawMatch;
-    return `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${filePath}`;
+    candidates.push(`https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${filePath}`);
+    if (!filePath.startsWith('public/')) {
+      candidates.push(`https://raw.githubusercontent.com/${owner}/${repo}/${branch}/public/${filePath}`);
+    }
+    return candidates;
   }
 
-  return trimmed;
+  // Case 3: https://raw.githubusercontent.com/:owner/:repo/:branch/:path...
+  const directRawRegex = /^https?:\/\/raw\.githubusercontent\.com\/([^\/]+)\/([^\/]+)\/([^\/]+)\/(.+)$/i;
+  const directRawMatch = trimmed.match(directRawRegex);
+  if (directRawMatch) {
+    const [, owner, repo, branch, filePath] = directRawMatch;
+    candidates.push(trimmed);
+    if (!filePath.startsWith('public/')) {
+      candidates.push(`https://raw.githubusercontent.com/${owner}/${repo}/${branch}/public/${filePath}`);
+    } else {
+      candidates.push(`https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${filePath.replace(/^public\//, '')}`);
+    }
+    return candidates;
+  }
+
+  candidates.push(trimmed);
+  // Also provide direct repository candidates if pointing to relative tridy.xlsx
+  if (trimmed === './tridy.xlsx' || trimmed === 'tridy.xlsx') {
+    candidates.push('https://raw.githubusercontent.com/Sarka636/ZasedaciPoradek/main/public/tridy.xlsx');
+    candidates.push('https://raw.githubusercontent.com/Sarka636/ZasedaciPoradek/main/tridy.xlsx');
+  }
+
+  return candidates;
+}
+
+export function convertGitHubUrlToRaw(inputUrl: string): string {
+  const list = convertGitHubUrlToCandidates(inputUrl);
+  return list[0] || inputUrl.trim();
 }
 
 /**
- * Fetches an Excel file from a URL (e.g. on GitHub) and parses all class sheets
+ * Fetches an Excel file from a URL (e.g. on GitHub) and parses all class sheets.
+ * Includes cache-busting so updates on GitHub are immediately downloaded.
  */
 export async function fetchAndParseExcelFromUrl(url: string): Promise<ClassParseResult> {
-  const rawUrl = convertGitHubUrlToRaw(url);
+  const candidateUrls = convertGitHubUrlToCandidates(url);
+  const errors: string[] = [];
 
-  try {
-    const response = await fetch(rawUrl, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/octet-stream, */*',
-      },
-    });
+  for (const candidate of candidateUrls) {
+    try {
+      const sep = candidate.includes('?') ? '&' : '?';
+      const fetchUrl = `${candidate}${sep}_t=${Date.now()}`;
 
-    if (!response.ok) {
-      throw new Error(`Chyba stahování: HTTP ${response.status} (${response.statusText})`);
+      const response = await fetch(fetchUrl, {
+        method: 'GET',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/octet-stream, */*',
+        },
+      });
+
+      if (!response.ok) {
+        errors.push(`${candidate} (HTTP ${response.status})`);
+        continue;
+      }
+
+      const arrayBuffer = await response.arrayBuffer();
+      const data = new Uint8Array(arrayBuffer);
+      const workbook = XLSX.read(data, { type: 'array' });
+
+      const parseRes = parseExcelWorkbook(workbook);
+      if (parseRes.classes.length > 0) {
+        parseRes.source = candidate;
+        return parseRes;
+      } else {
+        errors.push(`${candidate}: nebyly nalezeny žádné třídy se studenty`);
+      }
+    } catch (err: any) {
+      errors.push(`${candidate}: ${err?.message || 'Chyba sítě'}`);
     }
-
-    const arrayBuffer = await response.arrayBuffer();
-    const data = new Uint8Array(arrayBuffer);
-    const workbook = XLSX.read(data, { type: 'array' });
-
-    const parseRes = parseExcelWorkbook(workbook);
-    parseRes.source = url;
-    return parseRes;
-  } catch (err: any) {
-    return {
-      classes: [],
-      errors: [
-        `Nepodařilo se načíst soubor z GitHubu: ${err?.message || 'Zkontrolujte adresu a dostupnost repozitáře'}.`,
-      ],
-      source: url,
-    };
   }
+
+  return {
+    classes: [],
+    errors: [
+      `Nepodařilo se načíst aktuální soubor z GitHubu. Vyzkoušeno: ${errors.join(', ')}`,
+    ],
+    source: url,
+  };
 }
 
 /**

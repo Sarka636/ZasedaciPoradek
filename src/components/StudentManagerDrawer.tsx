@@ -35,6 +35,7 @@ export const StudentManagerDrawer: React.FC<StudentManagerDrawerProps> = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [newName, setNewName] = useState('');
+  const [isConfirmingClear, setIsConfirmingClear] = useState(false);
 
   if (!isOpen) return null;
 
@@ -232,16 +233,35 @@ export const StudentManagerDrawer: React.FC<StudentManagerDrawerProps> = ({
             <span className="text-slate-500">
               Celkem: {students.length} žáků
             </span>
-            <button
-              onClick={() => {
-                if (confirm('Opravdu si přejete smazat celý seznam žáků?')) {
-                  onClearAll();
-                }
-              }}
-              className="text-red-600 hover:text-red-800 font-medium hover:underline text-[11px]"
-            >
-              Vymazat všechny žáky
-            </button>
+            {isConfirmingClear ? (
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClearAll();
+                    setIsConfirmingClear(false);
+                  }}
+                  className="text-red-700 bg-red-100 hover:bg-red-200 px-2 py-1 rounded text-[11px] font-bold transition-colors"
+                >
+                  Opravdu smazat všechny?
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsConfirmingClear(false)}
+                  className="text-slate-500 hover:text-slate-700 text-[11px] underline"
+                >
+                  Zpět
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setIsConfirmingClear(true)}
+                className="text-red-600 hover:text-red-800 font-medium hover:underline text-[11px]"
+              >
+                Vymazat všechny žáky
+              </button>
+            )}
           </div>
         )}
 

@@ -33,6 +33,8 @@ import { UploadModal } from './components/UploadModal';
 import { DownloadGuideModal } from './components/DownloadGuideModal';
 import { StudentManagerDrawer } from './components/StudentManagerDrawer';
 import { PrintView } from './components/PrintView';
+import { NewClassModal } from './components/NewClassModal';
+import { DeleteClassModal } from './components/DeleteClassModal';
 import {
   Shuffle,
   FileSpreadsheet,
@@ -46,10 +48,13 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
-// Initial sample classes mapped to ClassData
+// Default repository URL pointing to the user's actual tridy.xlsx
+const DEFAULT_GITHUB_URL = 'https://raw.githubusercontent.com/Sarka636/ZasedaciPoradek/main/public/tridy.xlsx';
+
+// Initial sample classes mapped to ClassData (pre-populated with school classes 3A, 1E, 3A_a, 3A_b)
 const INITIAL_SAMPLE_CLASSES: ClassData[] = SAMPLE_CLASSES.map((sample, idx) => ({
   id: `class-sample-${idx + 1}`,
-  name: sample.name.split(' ')[0], // e.g. "1.A", "1.B", "Sekunda"
+  name: sample.name,
   students: sample.students.map((name, sIdx) => ({
     id: `student-init-${idx}-${sIdx}`,
     name,
@@ -65,7 +70,11 @@ export default function App() {
 
   // GitHub Auto-Fetch State
   const [gitHubUrl, setGitHubUrl] = useState<string>(() => {
-    return localStorage.getItem('github_excel_url') || './tridy.xlsx';
+    const saved = localStorage.getItem('github_excel_url');
+    if (saved && saved !== './tridy.xlsx' && saved !== 'tridy.xlsx') {
+      return saved;
+    }
+    return DEFAULT_GITHUB_URL;
   });
   const [isGitHubSettingsOpen, setIsGitHubSettingsOpen] = useState(false);
   const [isSyncingGitHub, setIsSyncingGitHub] = useState(false);
@@ -97,6 +106,8 @@ export default function App() {
   const [isGuideOpen, setIsGuideOpen] = useState(false);
   const [isStudentListOpen, setIsStudentListOpen] = useState(false);
   const [isPrintOpen, setIsPrintOpen] = useState(false);
+  const [isNewClassModalOpen, setIsNewClassModalOpen] = useState(false);
+  const [classToDelete, setClassToDelete] = useState<ClassData | null>(null);
 
   // Show toast notification
   const showToast = (text: string, type: 'success' | 'info' | 'warning' = 'success') => {
@@ -194,21 +205,72 @@ export default function App() {
     showToast(`Přepnuto na třídu: ${targetClass.name} (${targetClass.students.length} žáků)`, 'info');
   };
 
-  // Add a new empty class
-  const handleAddClass = () => {
-    const nextNum = classes.length + 1;
-    const name = window.prompt('Zadejte název nové třídy (např. 2.A):', `${nextNum}.A`);
-    if (!name || !name.trim()) return;
+  // Open dialog to add a new empty class
+  const handleOpenNewClassModal = () => {
+    setIsNewClassModalOpen(true);
+  };
+
+  // Create class confirmed from NewClassModal
+  const handleCreateClass = (name: string) => {
+    const trimmed = name.trim();
+    if (!trimmed) return;
 
     const newClass: ClassData = {
       id: `class-${Date.now()}`,
-      name: name.trim(),
+      name: trimmed,
       students: [],
     };
 
     setClasses((prev) => [...prev, newClass]);
     handleSelectClass(newClass.id);
-    showToast(`Vytvořena nová třída: ${name}`, 'success');
+    showToast(`Vytvořena nová třída: ${trimmed}`, 'success');
+  };
+
+  // Request delete class (opens DeleteClassModal)
+  const handleRequestDeleteClass = (classId: string) => {
+    const clsToDelete = classes.find((c) => c.id === classId);
+    if (!clsToDelete) return;
+    setClassToDelete(clsToDelete);
+  };
+
+  // Confirmed delete from DeleteClassModal
+  const handleConfirmDeleteClass = (classId: string) => {
+    const clsToDelete = classes.find((c) => c.id === classId);
+    if (!clsToDelete) return;
+
+    const remaining = classes.filter((c) => c.id !== classId);
+
+    // Remove deleted plan
+    setClassPlans((prev) => {
+      const copy = { ...prev };
+      delete copy[classId];
+      return copy;
+    });
+
+    if (remaining.length === 0) {
+      // If user deleted the last class, create a fresh empty class so UI never crashes
+      const freshClass: ClassData = {
+        id: `class-${Date.now()}`,
+        name: 'Nová třída',
+        students: [],
+      };
+      setClasses([freshClass]);
+      setActiveClassId(freshClass.id);
+      setStudents([]);
+      setConfig((prev) => ({ ...prev, className: freshClass.name }));
+      setPlan({});
+    } else {
+      setClasses(remaining);
+      if (activeClassId === classId) {
+        const nextClass = remaining[0];
+        setActiveClassId(nextClass.id);
+        setStudents(nextClass.students);
+        setConfig((prev) => ({ ...prev, className: nextClass.name }));
+        setPlan(classPlans[nextClass.id] || {});
+      }
+    }
+
+    showToast(`Třída „${clsToDelete.name}“ byla smazána.`, 'info');
   };
 
   // Download multi-class Excel template
@@ -288,41 +350,70 @@ export default function App() {
     }
   }, []);
 
-  // Handle students load from upload modal
-  const handleLoadStudents = (newStudents: Student[], newClassName?: string) => {
-    setStudents(newStudents);
-    if (newClassName) {
-      setConfig((prev) => ({ ...prev, className: newClassName }));
-      // Also update or add to classes list
-      setClasses((prev) => {
-        const exists = prev.some((c) => c.id === activeClassId);
-        if (exists) {
-          return prev.map((c) =>
-            c.id === activeClassId ? { ...c, name: newClassName, students: newStudents } : c
-          );
-        }
-        return [
-          ...prev,
-          { id: `class-${Date.now()}`, name: newClassName, students: newStudents },
-        ];
-      });
-    }
+  // Handle loading multiple classes from Excel sheets ("Pri nahrani excelu z Aplikace má přidat tolik tříd, kolik je záložek v souboru a převzít jména podle jmen záložek")
+  const handleLoadClasses = (newClasses: ClassData[]) => {
+    if (!newClasses || newClasses.length === 0) return;
 
-    const result = generateSeatingPlan(newStudents, {}, {
-      strategy: 'balanced',
-      layoutType: config.layoutType || 'two_columns_8',
+    // Determine whether to replace or merge
+    setClasses((prev) => {
+      // Check if current classes are only initial sample classes with no custom edits
+      const isOnlyInitial = prev.every((c) => c.id.startsWith('class-sample-'));
+      if (isOnlyInitial) {
+        return newClasses;
+      }
+
+      // Otherwise merge or append
+      const updated = [...prev];
+      for (const newCls of newClasses) {
+        const existingIdx = updated.findIndex(
+          (c) => c.name.trim().toLowerCase() === newCls.name.trim().toLowerCase()
+        );
+        if (existingIdx >= 0) {
+          updated[existingIdx] = newCls;
+        } else {
+          updated.push(newCls);
+        }
+      }
+      return updated;
     });
-    setPlan(result.plan);
-    setClassPlans((prev) => ({
-      ...prev,
-      [activeClassId]: result.plan,
-    }));
+
+    // Switch to first newly loaded class
+    const firstCls = newClasses[0];
+    setActiveClassId(firstCls.id);
+    setStudents(firstCls.students);
+    setConfig((prev) => ({ ...prev, className: firstCls.name }));
     setSelectedSeatKey(null);
 
+    // Pre-generate seating plans for the loaded classes
+    const freshPlans: Record<string, SeatingPlan> = {};
+    for (const cls of newClasses) {
+      const result = generateSeatingPlan(cls.students, {}, {
+        strategy: 'balanced',
+        layoutType: config.layoutType || 'two_columns_8',
+      });
+      freshPlans[cls.id] = result.plan;
+    }
+
+    setClassPlans((prev) => ({
+      ...prev,
+      ...freshPlans,
+    }));
+    setPlan(freshPlans[firstCls.id] || {});
+
     showToast(
-      `Načteno ${newStudents.length} studentů a vytvořen nový zasedací pořádek!`,
+      `Načteno ${newClasses.length} tříd ze záložek Excelu (${newClasses.map((c) => c.name).join(', ')})`,
       'success'
     );
+  };
+
+  // Handle single class or students load from upload modal
+  const handleLoadStudents = (newStudents: Student[], newClassName?: string) => {
+    const singleClass: ClassData = {
+      id: `class-${Date.now()}`,
+      name: newClassName || config.className || 'Moje třída',
+      students: newStudents,
+    };
+    handleLoadClasses([singleClass]);
   };
 
   // Handle Download Excel
@@ -497,7 +588,6 @@ export default function App() {
         totalSeats={currentCapacity}
         onOpenUpload={() => setIsUploadOpen(true)}
         onGenerateRandom={handleGenerateRandom}
-        onDownloadExcel={handleDownloadExcel}
         onDownloadPdf={handleDownloadPdf}
         onOpenGuide={() => setIsGuideOpen(true)}
         onOpenPrint={() => setIsPrintOpen(true)}
@@ -510,7 +600,8 @@ export default function App() {
         classes={classes}
         activeClassId={activeClassId}
         onSelectClass={handleSelectClass}
-        onAddClass={handleAddClass}
+        onAddClass={handleOpenNewClassModal}
+        onDeleteClass={handleRequestDeleteClass}
         onSyncGitHub={() => loadClassesFromUrl(gitHubUrl)}
         onOpenGitHubSettings={() => setIsGitHubSettingsOpen(true)}
         onDownloadTemplate={handleDownloadTemplate}
@@ -534,7 +625,7 @@ export default function App() {
               </span>
             </div>
             <p className="text-xs text-slate-500 leading-relaxed max-w-2xl">
-              {layoutInfo?.description || 'Kliknutím na dvě místa můžete žáky kdykoli prohodit.'} Výsledek lze stáhnout jako Excel i s grafikou jako PDF.
+              {layoutInfo?.description || 'Kliknutím na dvě místa můžete žáky kdykoli prohodit.'} Výsledek lze stáhnout i s grafikou jako PDF.
             </p>
           </div>
 
@@ -560,17 +651,6 @@ export default function App() {
             >
               <FileText className="h-4 w-4" />
               <span>{isExportingPdf ? 'Ukládám PDF...' : 'Uložit jako PDF'}</span>
-            </button>
-
-            {/* Excel Download Button */}
-            <button
-              onClick={handleDownloadExcel}
-              disabled={students.length === 0}
-              id="btn-main-download"
-              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-200 disabled:text-slate-400 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md shadow-emerald-200 active:scale-95 transition-all"
-            >
-              <Download className="h-4 w-4" />
-              <span>Stáhnout Excel</span>
             </button>
 
             {/* Guide Button */}
@@ -683,6 +763,7 @@ export default function App() {
       <UploadModal
         isOpen={isUploadOpen}
         onClose={() => setIsUploadOpen(false)}
+        onLoadClasses={handleLoadClasses}
         onLoadStudents={handleLoadStudents}
       />
 
@@ -721,6 +802,20 @@ export default function App() {
         onSaveAndFetch={loadClassesFromUrl}
         onDownloadTemplate={handleDownloadTemplate}
         lastSyncedAt={lastSyncedAt}
+      />
+
+      <NewClassModal
+        isOpen={isNewClassModalOpen}
+        onClose={() => setIsNewClassModalOpen(false)}
+        onCreateClass={handleCreateClass}
+        existingClassNames={classes.map((c) => c.name)}
+      />
+
+      <DeleteClassModal
+        classToDelete={classToDelete}
+        isOpen={!!classToDelete}
+        onClose={() => setClassToDelete(null)}
+        onConfirmDelete={handleConfirmDeleteClass}
       />
 
     </div>

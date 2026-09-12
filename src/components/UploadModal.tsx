@@ -18,17 +18,19 @@ import {
   parseTextList,
   SAMPLE_CLASSES,
 } from '../utils/excelParser';
-import { Student } from '../types';
+import { ClassData, Student } from '../types';
 
 interface UploadModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onLoadStudents: (students: Student[], className?: string) => void;
+  onLoadClasses: (classes: ClassData[]) => void;
+  onLoadStudents?: (students: Student[], className?: string) => void;
 }
 
 export const UploadModal: React.FC<UploadModalProps> = ({
   isOpen,
   onClose,
+  onLoadClasses,
   onLoadStudents,
 }) => {
   const [activeTab, setActiveTab] = useState<'upload' | 'sample' | 'paste'>('upload');
@@ -48,16 +50,35 @@ export const UploadModal: React.FC<UploadModalProps> = ({
 
     try {
       const result = await parseStudentFile(file);
-      if (result.errors.length > 0 && result.students.length === 0) {
+      if (
+        result.errors.length > 0 &&
+        (!result.classes || result.classes.length === 0) &&
+        (!result.students || result.students.length === 0)
+      ) {
         setErrorMessage(result.errors.join(' '));
         setIsLoading(false);
         return;
       }
 
-      // Infer class name from file name if possible e.g. "studenti_1A.xlsx" -> "1.A"
-      const cleanFileName = file.name.replace(/\.[^/.]+$/, '').replace(/[_ -]/g, ' ');
+      // If workbook has sheets, load all sheets as classes with tab names
+      if (result.classes && result.classes.length > 0) {
+        onLoadClasses(result.classes);
+        onClose();
+        return;
+      }
 
-      onLoadStudents(result.students, cleanFileName);
+      // Fallback for simple CSV / single-sheet file
+      const cleanFileName = file.name.replace(/\.[^/.]+$/, '').replace(/[_ -]/g, ' ');
+      const singleClass: ClassData = {
+        id: `class-${Date.now()}`,
+        name: cleanFileName || 'Nová třída',
+        students: result.students,
+      };
+
+      onLoadClasses([singleClass]);
+      if (onLoadStudents) {
+        onLoadStudents(result.students, cleanFileName);
+      }
       onClose();
     } catch (err: any) {
       setErrorMessage(err.message || 'Nepodařilo se zpracovat soubor.');
@@ -81,7 +102,15 @@ export const UploadModal: React.FC<UploadModalProps> = ({
       id: `student-sample-${Date.now()}-${index}`,
       name,
     }));
-    onLoadStudents(students, sample.name.split(' ')[0]);
+    const sampleClass: ClassData = {
+      id: `class-${Date.now()}`,
+      name: sample.name.split(' ')[0],
+      students,
+    };
+    onLoadClasses([sampleClass]);
+    if (onLoadStudents) {
+      onLoadStudents(students, sample.name.split(' ')[0]);
+    }
     onClose();
   };
 
@@ -92,7 +121,15 @@ export const UploadModal: React.FC<UploadModalProps> = ({
       setErrorMessage('Nebylo nalezeno žádné jméno žáka.');
       return;
     }
-    onLoadStudents(students, detectedClassName || 'Moje třída');
+    const pastedClass: ClassData = {
+      id: `class-${Date.now()}`,
+      name: detectedClassName.trim() || 'Vložená třída',
+      students,
+    };
+    onLoadClasses([pastedClass]);
+    if (onLoadStudents) {
+      onLoadStudents(students, detectedClassName || 'Moje třída');
+    }
     onClose();
   };
 

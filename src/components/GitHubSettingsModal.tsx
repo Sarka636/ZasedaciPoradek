@@ -29,7 +29,8 @@ export const GitHubSettingsModal: React.FC<GitHubSettingsModalProps> = ({
   onDownloadTemplate,
   lastSyncedAt,
 }) => {
-  const [urlInput, setUrlInput] = useState(currentUrl || './tridy.xlsx');
+  const GITHUB_REPO_URL = 'https://raw.githubusercontent.com/Sarka636/ZasedaciPoradek/main/public/tridy.xlsx';
+  const [urlInput, setUrlInput] = useState(currentUrl || GITHUB_REPO_URL);
   const [isLoading, setIsLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState<{
     type: 'success' | 'error' | 'info';
@@ -63,10 +64,10 @@ export const GitHubSettingsModal: React.FC<GitHubSettingsModalProps> = ({
   };
 
   const handleUseDefault = () => {
-    setUrlInput('./tridy.xlsx');
+    setUrlInput(GITHUB_REPO_URL);
     setStatusMessage({
       type: 'info',
-      text: 'Nastavena výchozí cesta ./tridy.xlsx (vhodná pro GitHub Pages i lokální spuštění).',
+      text: 'Nastavena adresa aktuálního souboru tridy.xlsx na Vašem GitHubu.',
     });
   };
 
